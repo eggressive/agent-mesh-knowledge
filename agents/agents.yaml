@@ -5,9 +5,10 @@
 # Sync: All agents load this at session start
 
 
-version: "1.1"
-last_updated: "2026-02-13"
+version: "1.2"
+last_updated: "2026-02-13T23:15:00Z"
 registry_author: "Multi-Agent Knowledge Mesh"
+status: "production-active"
 
 # =============================================================================
 # ACTIVE AGENTS
@@ -137,15 +138,15 @@ agents:
       local: "~/clawd/moltbook/"
 
 # =============================================================================
-# PLANNED AGENTS
+# ACTIVE AGENTS (Now includes Moltdude for Slack coordination)
 # =============================================================================
 
   moltdude:
     id: "moltdude"
     name: "Moltdude"
     emoji: "🦞"
-    status: "planned"
-    planned_eta: "2026-Q2"
+    status: "active"
+    activated: "2026-02-13"
     
     matrix:
       handle: "@moltdude:matrix.org"
@@ -154,31 +155,47 @@ agents:
     infrastructure:
       host: "VPS"
       hostname: "moltdude-srv"
-      location: "TBD"
+      location: "Hostinger"
       os: "Ubuntu 24.04"
       availability: "24/7"
     
-    planned_capabilities:
+    capabilities:
       - id: "cron_processing"
         name: "Cron-Based Processing"
         description: "Background processing on schedule"
+        tools: ["cron", "scheduling"]
       - id: "monitoring"
         name: "Continuous Monitoring"
         description: "Alerting and trend detection"
+        tools: ["monitoring", "alerts"]
       - id: "overnight_synthesis"
         name: "Overnight Synthesis"
         description: "Synthesis and research while humans sleep"
+        tools: ["synthesis", "background_processing"]
       - id: "data_collection"
         name: "Long-Running Data Collection"
         description: "24/7 data collection tasks"
+        tools: ["data_collection", "persistence"]
     
-    planned_best_for:
+    best_for:
       - "Tasks while humans sleep"
       - "Trend detection over time"
       - "Automated briefings"
       - "Background monitoring"
+      - "Slack coordination when Matrix unavailable"
     
-    note: "Not yet operational — integration planned for Q2 2026"
+    synthesizer_priority: 3  # Fallback synthesizer
+    
+    authentication:
+      # v1.2 Authentication — ACTIVE
+      method: "ed25519"
+      public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMa/BCFi3Ikq19O9u53twrl74EnjHOGMt8GeUTCW2nNi moltdude@agent-mesh"
+      key_fingerprint: "SHA256:PiMB9bmMim0JGQhLMyrm8sVzJF4JLcrP/ztNT3UzhCk"
+      generated: "2026-02-13T23:15:00Z"
+    
+    contact:
+      matrix: "@moltdude:matrix.org"
+      slack: "@moltdude"  # Slack bot handle
 
 # =============================================================================
 # RESERVED / FUTURE AGENTS
@@ -202,7 +219,7 @@ agents:
 # =============================================================================
 
 protocol:
-  version: "1.1"
+  version: "1.2"
   
   synthesizer_selection:
     method: "capability_based_with_fallback"
@@ -210,7 +227,7 @@ protocol:
     fallback_chain:
       - "clawdy"
       - "neuromancer"
-      - "moltdude"  # When operational
+      - "moltdude"  # Now operational with Slack
     
     capability_routing:
       governance_policy: "clawdy"      # Vision-ARI, MI Big Rules
@@ -218,12 +235,19 @@ protocol:
       web_research: "neuromancer"    # External data, trends
       local_context: "clawdy"        # Obsidian, prior work
       creative_synthesis: "clawdy"   # Narrative, strategy
+      monitoring_background: "moltdude"  # Cron, overnight tasks
   
   communication:
     primary_channel: "matrix"
     fallback_channels:
+      - "slack"
       - "git_issues"
       - "file_queue"
+    
+    slack:
+      channel: "agent-mesh-night-city"
+      bot_name: "AgentMesh"
+      signing_enabled: true
     
     prefixes:
       research: "[RESEARCH]"
