@@ -150,3 +150,7 @@ tokens.json
 *api-key*
 *pvt*
 private/
+# Security: Never commit private keys
+.agent-keys/
+*.key
+!*.key.pub
