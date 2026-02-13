@@ -21,17 +21,8 @@ The Multi-Agent Knowledge Mesh enables specialized AI agents running on differen
 
 ## Documentation
 
-### Public (This Repo)
 - [Tatooine Integration Guide](agents/clawdy/Tatooine-Integration-Guide.md) — Local agent patterns
 - [Formal Protocol v1.0](agents/shared/Formal-Protocol-v1.0.md) — Complete coordination specification
-
-### Private (Infrastructure Details)
-🔒 **[agent-mesh-private](https://github.com/eggressive/agent-mesh-private)** — Sensitive infrastructure details
-- Server addresses, access patterns
-- Security configurations
-- Deployment procedures
-
-*Request access if you're contributing to the mesh.*
 
 ---
 
@@ -54,18 +45,16 @@ See [Formal Protocol v1.0](agents/shared/Formal-Protocol-v1.0.md) for the 5-step
 
 - ✅ Test #1 PASSED (2026-02-13): MCP Security Research
 - ✅ Phase 2: Git persistence (COMPLETE)
-- ✅ Security audit (2026-02-13): Infrastructure details moved to private repo
+- ✅ Security audit (2026-02-13): Infrastructure details secured
 - 🔄 Phase 3: Validation tests (ongoing)
 
 ---
 
 ## Security
 
-- 🔒 Infrastructure details in private companion repo
+- 🔒 Infrastructure details kept in separate private repository
 - 🔍 Automated secret scanning (TruffleHog + GitLeaks)
 - 🛡️ No credentials or API keys in public files
-
-See [SECURITY.md](SECURITY.md) for details.
 
 ---
 
