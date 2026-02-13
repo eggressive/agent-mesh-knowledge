@@ -64,6 +64,13 @@ agents:
     
     synthesizer_priority: 2  # Fallback synthesizer if Clawdy unavailable
     
+    authentication:
+      # v1.2 Authentication — Generate keypair and update this section
+      method: "ed25519"
+      public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI[PLACEHOLDER-NEUROMANCER-KEY] neuromancer@agent-mesh"
+      key_fingerprint: "SHA256:[PLACEHOLDER-FINGERPRINT]"
+      # Generate with: ssh-keygen -t ed25519 -f ~/.openclaw/agent-mesh-signing.key
+    
     contact:
       matrix: "@sword.f1sh:matrix.org"
       vps: "srv1325739"
@@ -117,6 +124,13 @@ agents:
       - "Governance and policy analysis"
     
     synthesizer_priority: 1  # Primary synthesizer (creative/merge skills)
+    
+    authentication:
+      # v1.2 Authentication — Generate keypair and update this section
+      method: "ed25519"
+      public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI[PLACEHOLDER-CLAWDY-KEY] clawdy@agent-mesh"
+      key_fingerprint: "SHA256:[PLACEHOLDER-FINGERPRINT]"
+      # Generate with: ssh-keygen -t ed25519 -f ~/.openclaw/agent-mesh-signing.key
     
     contact:
       matrix: "@clawdy:matrix.org"
