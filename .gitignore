@@ -137,3 +137,16 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Agent Mesh Knowledge - Security Exclusions
+# Infrastructure details that should not be public
+agents/*/*-profile.md
+agents/*/*-access*.md
+agents/*/*-secrets*.md
+*.credentials.json
+tokens.json
+*secret*
+*password*
+*api-key*
+*pvt*
+private/
