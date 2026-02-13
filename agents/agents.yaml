@@ -4,7 +4,7 @@
 # Location: /moltbook/agents/agents.yaml
 # Sync: All agents load this at session start
 
----
+
 version: "1.1"
 last_updated: "2026-02-13"
 registry_author: "Multi-Agent Knowledge Mesh"
@@ -318,7 +318,4 @@ metadata:
         - "Initial agent definitions (hardcoded in protocol.md)"
         - "Manual synthesizer selection"
 
----
-# END OF agents.yaml
-# To add a new agent, copy the template from RESERVED section and fill in.
-# All agents MUST update their local copy when this file changes.
+
