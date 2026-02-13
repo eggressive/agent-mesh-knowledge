@@ -1,0 +1,225 @@
+# Multi-Agent Knowledge Mesh — Agent Registry
+# Version: 1.1
+# Last Updated: 2026-02-13
+
+# Agent Status Values:
+# - active: Fully operational, available for task assignment
+# - planned: In development, not yet operational
+# - maintenance: Temporarily offline for updates
+# - retired: No longer part of the mesh
+
+agents:
+  clawdy:
+    id: clawdy
+    name: "Clawdy"
+    location: "tatooine"
+    description: "Local workstation agent with Obsidian integration"
+    status: active
+    version: "1.0"
+    
+    capabilities:
+      - obsidian_vault
+      - local_file_access
+      - skill_orchestration
+      - creative_synthesis
+      - windows_wsl_integration
+    
+    specialties:
+      - governance_framework
+      - vision_ari_context
+      - s_and_p_policy
+      - prior_decisions_lookup
+      - documentation_integration
+    
+    contact:
+      matrix: "@clawdy:matrix.org"
+      
+    infrastructure:
+      type: "local_workstation"
+      os: "WSL2 Ubuntu 22.04"
+      host: "Tatooine"
+      availability: "follows_human_schedule"
+      
+    access_patterns:
+      obsidian_vault: "/mnt/c/Users/mitko/OneDrive/Documents/My-obsidian/"
+      skills_path: "~/clawd/skills/"
+      workspace: "~/clawd/"
+      projects: "~/projects/"
+      artifacts: "~/clawd/artifacts/"
+    
+    limitations:
+      - no_24_7_availability
+      - no_vps_infrastructure_access
+      - zscaler_proxy_restrictions
+      - wsl_resource_limits
+    
+    best_for:
+      - context_retrieval
+      - creative_synthesis
+      - documentation
+      - local_tool_orchestration
+      
+    git_profile: "agents/clawdy/"
+
+  neuromancer:
+    id: neuromancer
+    name: "Neuromancer"
+    location: "vps"
+    description: "VPS-based agent with 24/7 availability and web research"
+    status: active
+    version: "1.0"
+    
+    capabilities:
+      - web_research
+      - github_api_access
+      - bash_execution
+      - docker_containerization
+      - cron_scheduling
+      - 24_7_availability
+    
+    specialties:
+      - cve_research
+      - security_advisories
+      - repository_analysis
+      - external_api_queries
+      - infrastructure_tasks
+      - long_running_processing
+    
+    contact:
+      matrix: "@sword.f1sh:matrix.org"
+      
+    infrastructure:
+      type: "vps"
+      provider: "DigitalOcean"
+      host: "srv1325739"
+      ip: "100.117.221.84"
+      os: "Ubuntu 22.04"
+      availability: "24_7"
+      
+    access_patterns:
+      workspace: "/home/openclaw/"
+      moltbook: "/home/openclaw/moltbook/"
+      tmp: "/tmp/"
+      
+    authentication:
+      github_pat: "configured"
+      tailscale: "enabled"
+      
+    limitations:
+      - no_tatooine_filesystem_access
+      - no_obsidian_context
+      - no_local_skills
+    
+    best_for:
+      - overnight_research
+      - continuous_monitoring
+      - large_scale_processing
+      - web_api_integration
+      
+    git_profile: "agents/neuromancer/"
+
+  moltdude:
+    id: moltdude
+    name: "Moltdude"
+    location: "vps"
+    description: "Planned agent for background monitoring and automation"
+    status: planned
+    version: "0.1"
+    eta: "2026-Q2"
+    
+    planned_capabilities:
+      - cron_based_processing
+      - continuous_monitoring
+      - overnight_synthesis
+      - background_research
+      - automated_briefings
+      - trend_detection
+    
+    planned_specialties:
+      - 24_7_data_collection
+      - autonomous_learning_loops
+      - predictive_alerts
+      - resource_optimization
+    
+    contact:
+      matrix: "TBD"
+      
+    infrastructure:
+      type: "vps"
+      availability: "24_7_planned"
+      
+    dependencies:
+      - meshtastic_hardware_setup
+      - monitoring_system_integration
+      - cron_job_framework
+      
+    notes: "Planned for Q2 2026. Will handle background tasks while other agents offline."
+    
+    git_profile: "agents/moltdude/"
+
+# Task Routing Configuration
+# Defines which agent should synthesize based on task characteristics
+
+routing:
+  governance_tasks:
+    description: "Vision-ARI policy, S&P rules, compliance"
+    primary: clawdy
+    fallback: neuromancer
+    timeout_minutes: 15
+    
+  security_tasks:
+    description: "CVEs, threat intel, security advisories"
+    primary: neuromancer
+    fallback: clawdy
+    timeout_minutes: 15
+    
+  infrastructure_tasks:
+    description: "Bash, Docker, system-level work"
+    primary: neuromancer
+    fallback: moltdude
+    conditions: "moltdude.status == active"
+    timeout_minutes: 20
+    
+  creative_synthesis:
+    description: "Merging findings, narrative creation"
+    primary: clawdy
+    fallback: neuromancer
+    timeout_minutes: 15
+    
+  monitoring_tasks:
+    description: "Continuous observation, alerting"
+    primary: moltdude
+    fallback: neuromancer
+    conditions: "moltdude.status == active"
+    timeout_minutes: 60
+
+# Mesh Configuration
+
+mesh:
+  version: "1.1"
+  protocol_documentation: "docs/protocol-v1.0-formal.md"
+  
+  git_workflow:
+    strategy: "branch_per_task"
+    documentation: "docs/v1.1-git-workflow-update.md"
+    
+  coordination:
+    primary_channel: "matrix"
+    fallback_channels:
+      - "git_issues"
+      - "file_queue"
+    
+  security:
+    data_classification_required: true
+    audit_trail_enabled: true
+    message_signing: "planned_v1.2"
+    
+  monitoring:
+    health_checks: "planned_v1.2"
+    agent_heartbeat: "planned_v1.2"
+    
+# Notes for v1.2
+# - Add message signing with public keys
+# - Add capability-based automatic routing
+# - Add health check endpoints
+# - Add agent heartbeat monitoring
