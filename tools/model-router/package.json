@@ -1,0 +1,17 @@
+{
+  "name": "model-router",
+  "version": "0.1.2",
+  "description": "Intelligent model selection based on task prefixes and content classification",
+  "main": "router.js",
+  "scripts": {
+    "test": "node --test tests/"
+  },
+  "keywords": [
+    "ai",
+    "model-routing",
+    "llm",
+    "agent"
+  ],
+  "author": "Agent Mesh Contributors",
+  "license": "MIT"
+}

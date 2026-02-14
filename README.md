@@ -103,6 +103,22 @@ The Multi-Agent Knowledge Mesh enables specialized AI agents running on differen
 
 ---
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and areas for improvement.
+
+**Quick setup:**
+```bash
+# Python scripts
+pip install -r requirements.txt
+
+# Node.js tools
+cd tools/model-router && npm install && npm test
+cd tools/memory-vector && npm install
+```
+
+---
+
 ## License
 
 MIT © 2026 Agent Mesh Contributors
