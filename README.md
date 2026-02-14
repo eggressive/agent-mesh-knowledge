@@ -1,70 +1,105 @@
 # Multi-Agent Knowledge Mesh
 
-Protocol and documentation for coordinated AI agents across multiple machines.
+Protocols and tooling for coordinated AI agents across multiple machines.
 
 ## Overview
 
-The Multi-Agent Knowledge Mesh enables specialized AI agents running on different machines (VPS, local workstations, cloud) to coordinate on complex tasks, delivering higher-quality answers than any single agent working alone.
+The Multi-Agent Knowledge Mesh enables specialized AI agents running on different machines (VPS, local workstations) to coordinate on complex tasks, delivering higher-quality answers than any single agent working alone.
 
-**Key Innovation:** Parallel research from agents with different capabilities (web access vs. local files vs. 24/7 monitoring) cross-pollinated into unified synthesis.
+**Key Innovation:** Parallel research from agents with different capabilities cross-pollinated into unified synthesis.
 
 ---
 
 ## Agents
 
-| Agent | Location | Role |
-|-------|----------|------|
-| **Clawdy** 🤖 | Tatooine (WSL) | Local context, creative synthesis, Obsidian integration |
-| **Moltdude** 🦞 | Neuromancer (VPS) | Web research, infrastructure, Moltbook integration |
+| Agent | Location | Model | Role |
+|-------|----------|-------|------|
+| **Clawdy** 🤖 | Tatooine (WSL) | Kimi K2.5 | Local context, creative synthesis, Obsidian |
+| **Neuromancer** 🔮 | VPS | Kimi K2.5 | Web research, infrastructure, 24/7 monitoring |
+| **MoltDude** 🦞 | VPS | Gemini 2.5 Flash | Telegram bot, Moltbook integration |
 
 ---
 
-## Documentation
+## Protocols
 
-- [Tatooine Integration Guide](agents/clawdy/Tatooine-Integration-Guide.md) — Local agent patterns
-- [Formal Protocol v1.0](agents/shared/Formal-Protocol-v1.0.md) — Complete coordination specification
+| Protocol | Version | Description |
+|----------|---------|-------------|
+| [Authentication](docs/authentication-v1.2.md) | v1.2 | Ed25519 message signing |
+| [Bayesian Update](docs/bayesian-update-protocol-v1.3.md) | v1.3 | Belief propagation with confidence scores |
+| [Git Workflow](docs/git-workflow-v1.1.md) | v1.1 | Branch-per-task coordination |
+| [Slack Fallback](docs/slack-fallback-v1.2.md) | v1.2 | Matrix → Slack bridge for outages |
+| [Memory Architecture](docs/memory-architecture-v1.0.md) | v1.0 | 3-tier memory + vector search |
+
+---
+
+## Tools
+
+| Tool | Description |
+|------|-------------|
+| [Model Router](tools/model-router/) | Prefix-based model selection (`/code`, `/deep`, `/research`) |
+| [Memory Vector](tools/memory-vector/) | Semantic vector search with local embeddings (FREE) |
 
 ---
 
 ## Quick Start
 
-See [Formal Protocol v1.0](agents/shared/Formal-Protocol-v1.0.md) for the 5-step coordination protocol.
+**Coordination Flow:**
+```
+1. Human posts question in Matrix (Night City)
+2. Agents acknowledge within 60 seconds
+3. Each agent researches from their specialty
+4. Cross-pollination via Matrix/Git
+5. One agent delivers unified synthesis
+```
 
-**Example workflow:**
+**Model Router Prefixes:**
 ```
-1. Human posts question in Matrix coordination channel
-2. Available agents acknowledge within 60 seconds
-3. Each agent researches from their specialty angle
-4. Agents cross-pollinate findings via Matrix/Git
-5. One agent delivers unified synthesis to human
+/code    → Codex (coding specialist)
+/deep    → Opus (complex reasoning)
+/research → Kimi (long context, web)
+/fast    → Haiku (quick tasks)
 ```
+
+---
+
+## Memory Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MEMORY SYSTEM LAYERS                      │
+├─────────────────────────────────────────────────────────────┤
+│  1. Daily Logs (memory/YYYY-MM-DD.md)  → Raw capture        │
+│  2. MEMORY.md                          → Curated wisdom     │
+│  3. memory_search (built-in)           → Keyword + basic    │
+│  4. memory_vector (NEW!)               → Semantic similarity │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Vector Search Implementations:**
+
+| Agent | Stack | Cost |
+|-------|-------|------|
+| Clawdy | LanceDB + Ollama (nomic-embed-text) | $0 |
+| Neuromancer | ChromaDB + sentence-transformers | $0 |
 
 ---
 
 ## Status
 
-- ✅ Test #1 PASSED (2026-02-13): MCP Security Research
-- ✅ Phase 2: Git persistence (COMPLETE)
-- ✅ Security audit (2026-02-13): Infrastructure details secured
-- 🔄 Phase 3: Validation tests (ongoing)
+- ✅ v1.0 Protocol (2026-02-13): Basic coordination
+- ✅ v1.2 Authentication: Ed25519 message signing
+- ✅ v1.3 Bayesian Updates: Confidence-weighted belief propagation
+- ✅ Model Router v0.1.2: Prefix-based model selection
+- ✅ Memory Architecture v1.0: 3-tier system + vector search
+- ✅ Option B Implemented: FREE local embeddings across mesh
 
 ---
 
 ## Security
 
-- 🔒 Infrastructure details kept in separate private repository
-- 🔍 Automated secret scanning (TruffleHog + GitLeaks)
+- 🔒 Infrastructure details in separate private repository
+- 🔐 Ed25519 keys in `~/.agent-keys/` (never committed)
 - 🛡️ No credentials or API keys in public files
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Ensure no sensitive data is exposed
-5. Submit a pull request
 
 ---
 
