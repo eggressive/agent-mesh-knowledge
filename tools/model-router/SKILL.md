@@ -115,6 +115,41 @@ const results = await Promise.all([
 ]);
 ```
 
+## Integration (Option A: Pre-processor)
+
+The agent detects prefixes and switches models using `session_status()`.
+
+**Pattern:**
+
+```javascript
+// 1. Check for explicit prefix
+if (message.startsWith('/code')) {
+  session_status({ model: 'codex' });
+}
+if (message.startsWith('/deep')) {
+  session_status({ model: 'opus' });
+}
+if (message.startsWith('/research')) {
+  session_status({ model: 'kimi' });
+}
+
+// 2. Process task with selected model
+// ...
+```
+
+**For coding tasks (spawn sub-agent):**
+
+```javascript
+sessions_spawn({
+  task: "Review this code for bugs",
+  model: "codex"
+});
+```
+
+**Key principle:** Agent-controlled, no magic. User sees what model runs.
+
+---
+
 ## Precedence Rules
 
 When multiple keywords match, the router uses this priority:
