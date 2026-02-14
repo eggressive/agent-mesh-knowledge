@@ -134,26 +134,71 @@ During memory maintenance (heartbeats), ask these questions:
 | **WAL Protocol** | ✅ | ❌ | ❌ |
 | **Working Buffer** | ✅ | ❌ | ✅ (paging) |
 | **Error → Lesson** | ✅ | ❌ | ❌ |
-| **Vector embeddings** | ❌ | ✅ | ✅ |
+| **Vector embeddings** | ✅ | ✅ | ✅ |
 | **Graph relationships** | ❌ | ✅ | ❌ |
 
-**Our advantage:** Low-complexity, file-based system that achieves 80% of advanced capabilities without infrastructure overhead.
+**Our advantage:** Low-complexity, file-based system with vector search that achieves 90% of advanced capabilities without infrastructure overhead.
 
-**Future upgrade path:** Add ChromaDB/Qdrant for vector search when memory exceeds ~50 daily files.
+---
+
+## Option B: Vector Search Layer (IMPLEMENTED)
+
+**Status:** ✅ Deployed across the mesh (Feb 14, 2026)
+
+### Implementations
+
+| Agent | Stack | Chunks | Location |
+|-------|-------|--------|----------|
+| **Clawdy (Tatooine)** | LanceDB + Ollama (nomic-embed-text) | 100 | `~/clawd/skills/memory-vector/` |
+| **Neuromancer (VPS)** | ChromaDB + sentence-transformers (all-MiniLM-L6-v2) | 13 | `/home/openclaw/workspace/scripts/memory_vector.py` |
+
+### Cost: $0/month (100% free local embeddings)
+
+### Usage
+
+**Clawdy (Node.js):**
+```bash
+cd ~/clawd/skills/memory-vector
+node index.js --index       # Index all memory files
+node index.js --search "S3 Tables bug"  # Semantic search
+```
+
+**Neuromancer (Python):**
+```bash
+cd /home/openclaw/workspace
+source memory-vector-env/bin/activate
+python scripts/memory_vector.py --index
+python scripts/memory_vector.py --search "S3 Tables bug"
+```
+
+### When to Use
+
+| Scenario | Use memory_search | Use memory_vector |
+|----------|-------------------|-------------------|
+| Quick keyword lookup | ✅ | ❌ |
+| "Find memories about X" | ✅ | ✅ |
+| "Find similar to this error" | ❌ | ✅ |
+| No exact keyword match | ❌ | ✅ |
+| Conceptual similarity | ❌ | ✅ |
+
+### Technical Details
+
+See: `tools/memory-vector/SKILL.md` for full Node.js implementation guide.
 
 ---
 
 ## Implementation Checklist
 
-- [ ] `memory/` directory exists
-- [ ] Daily logs written to `memory/YYYY-MM-DD.md`
-- [ ] `MEMORY.md` contains curated long-term context
-- [ ] `SESSION-STATE.md` tracks active task state
-- [ ] WAL Protocol followed (write before respond)
-- [ ] Working Buffer activated at 60%+ context
-- [ ] Error → Fix → Lesson pattern used for failures
-- [ ] Strategic forgetting applied during maintenance
-- [ ] Extraction prompts used during heartbeat reviews
+- [x] `memory/` directory exists
+- [x] Daily logs written to `memory/YYYY-MM-DD.md`
+- [x] `MEMORY.md` contains curated long-term context
+- [x] `SESSION-STATE.md` tracks active task state
+- [x] WAL Protocol followed (write before respond)
+- [x] Working Buffer activated at 60%+ context
+- [x] Error → Fix → Lesson pattern used for failures
+- [x] Strategic forgetting applied during maintenance
+- [x] Extraction prompts used during heartbeat reviews
+- [x] **Vector search layer (Option B)** deployed on both agents
 
 ---
 
