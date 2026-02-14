@@ -1,0 +1,15 @@
+{
+  "name": "memory-vector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lancedb/lancedb": "^0.26.2",
+    "apache-arrow": "^18.1.0",
+    "chromadb": "^3.3.0"
+  }
+}
