@@ -1,0 +1,47 @@
+{
+  "name": "model-router",
+  "version": "0.1.0",
+  "description": "Dynamic model switching based on task classification",
+  "entry": "router.js",
+  "commands": {
+    "route": {
+      "description": "Classify and route task to optimal model",
+      "args": ["task", "hint"]
+    },
+    "stats": {
+      "description": "Show routing statistics and cost breakdown"
+    }
+  },
+  "triggers": [
+    {
+      "pattern": "^/(code|research|deep|fast|cheap)\\s",
+      "action": "autoRoute"
+    }
+  ],
+  "config": {
+    "default": "kimi",
+    "autoRoute": true,
+    "routes": {
+      "code": {
+        "model": "codex",
+        "patterns": ["code", "function", "bug", "refactor", "implement", "debug", "review"],
+        "threshold": 0.6
+      },
+      "research": {
+        "model": "kimi", 
+        "patterns": ["research", "find", "search", "latest", "what is", "how to", "explain"],
+        "threshold": 0.5
+      },
+      "complex": {
+        "model": "opus",
+        "patterns": ["design", "architecture", "analyze", "audit", "evaluate", "optimize"],
+        "threshold": 0.7
+      }
+    },
+    "costLimits": {
+      "dailyOpusTokens": 100000,
+      "dailyOpusCost": 10.00,
+      "alertThreshold": 0.8
+    }
+  }
+}
