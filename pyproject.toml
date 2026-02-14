@@ -1,0 +1,34 @@
+[project]
+name = "agent-mesh-knowledge"
+version = "1.0.0"
+description = "Multi-Agent Knowledge Mesh - Protocols and tools for coordinated AI agents"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+slack = [
+    "slack-sdk>=3.26.0",
+    "aiohttp>=3.9.0",
+]
+vector = [
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+asyncio_mode = "auto"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
