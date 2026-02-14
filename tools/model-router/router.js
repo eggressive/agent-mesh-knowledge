@@ -16,21 +16,40 @@ function loadConfig() {
   return require('./skill.json').config;
 }
 
-// Simple intent classification
+// Hierarchical intent classification (Option C)
+// Priority: explicit prefix > strong keywords > medium keywords > default
 function classifyIntent(text, routes) {
   const lower = text.toLowerCase();
   
-  // Score each route, pick best match above minimum threshold
+  // Strong keywords = single match routes to model
+  const strongKeywords = {
+    opus: ['architecture', 'security review', 'threat model', 'security audit', 'design system'],
+    codex: ['debug this', 'fix this bug', 'refactor', 'implement function', 'write code']
+  };
+  
+  // Medium keywords = need 2+ matches
+  const mediumKeywords = {
+    opus: ['design', 'complex', 'distributed', 'scale', 'optimize', 'evaluate', 'analyze'],
+    codex: ['code', 'function', 'bug', 'review', 'implement', 'test'],
+    kimi: ['research', 'find', 'search', 'latest', 'what is', 'how to', 'explain']
+  };
+  
+  // Check strong keywords first (single match = route)
+  for (const [model, keywords] of Object.entries(strongKeywords)) {
+    if (keywords.some(k => lower.includes(k))) {
+      return { intent: model, model, confidence: 0.9, reason: 'strong keyword match' };
+    }
+  }
+  
+  // Check medium keywords (2+ matches = route)
   let bestMatch = null;
   let bestScore = 0;
   
-  for (const [intent, config] of Object.entries(routes)) {
-    const matches = config.patterns.filter(p => lower.includes(p)).length;
-    // Use absolute match count, not percentage
-    // threshold now means "minimum matches required"
-    if (matches >= (config.minMatches || 1) && matches > bestScore) {
+  for (const [model, keywords] of Object.entries(mediumKeywords)) {
+    const matches = keywords.filter(k => lower.includes(k)).length;
+    if (matches >= 2 && matches > bestScore) {
       bestScore = matches;
-      bestMatch = { intent, model: config.model, confidence: matches / config.patterns.length, matches };
+      bestMatch = { intent: model, model, confidence: matches / keywords.length, reason: `${matches} medium keywords` };
     }
   }
   
