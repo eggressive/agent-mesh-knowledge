@@ -115,6 +115,20 @@ const results = await Promise.all([
 ]);
 ```
 
+## Precedence Rules
+
+When multiple keywords match, the router uses this priority:
+
+```
+1. Explicit prefix (/code, /deep, /research) → ALWAYS WINS
+2. opus (architecture, complex reasoning)
+3. codex (code, debugging)
+4. kimi (research, general)
+5. default → kimi
+```
+
+Example: `"design the code architecture"` → **opus** (not codex, because opus is higher priority)
+
 ## Why Not Auto-Detect Everything?
 
 Explicit routing > magic:

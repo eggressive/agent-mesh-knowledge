@@ -1,15 +1,16 @@
 {
   "name": "model-router",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Dynamic model switching based on task classification",
   "entry": "router.js",
   "commands": {
     "route": {
       "description": "Classify and route task to optimal model",
-      "args": ["task", "hint"]
+      "args": ["task"]
     },
-    "stats": {
-      "description": "Show routing statistics and cost breakdown"
+    "test": {
+      "description": "Run test suite",
+      "script": "node tests/router.test.js"
     }
   },
   "triggers": [
@@ -21,24 +22,18 @@
   "config": {
     "default": "kimi",
     "autoRoute": true,
-    "routes": {
-      "code": {
-        "model": "codex",
-        "patterns": ["code", "function", "bug", "refactor", "implement", "debug", "review"],
-        "threshold": 0.6
-      },
-      "research": {
-        "model": "kimi", 
-        "patterns": ["research", "find", "search", "latest", "what is", "how to", "explain"],
-        "threshold": 0.5
-      },
-      "complex": {
-        "model": "opus",
-        "patterns": ["design", "architecture", "analyze", "audit", "evaluate", "optimize"],
-        "threshold": 0.7
-      }
+    "precedence": ["opus", "codex", "kimi"],
+    "strongKeywords": {
+      "opus": ["architecture", "security review", "threat model", "security audit", "design system"],
+      "codex": ["debug this", "fix this bug", "refactor", "implement function", "write code"]
+    },
+    "mediumKeywords": {
+      "opus": ["design", "complex", "distributed", "scale", "optimize", "evaluate", "analyze"],
+      "codex": ["code", "function", "bug", "review", "implement", "test"],
+      "kimi": ["research", "find", "search", "latest", "what is", "how to", "explain"]
     },
     "costLimits": {
+      "_note": "Not enforced in v0.1 — planned for v0.2",
       "dailyOpusTokens": 100000,
       "dailyOpusCost": 10.00,
       "alertThreshold": 0.8
