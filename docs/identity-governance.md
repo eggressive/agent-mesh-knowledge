@@ -1,168 +1,99 @@
-# Identity Governance for OpenClaw Agents
+# Identity Governance (OpenClaw)
 
-> **Rule 0:** SOUL.md is a constitution, not a diary. If it changes often, you're doing it wrong.
+Low ceremony. High auditability. Prevents slow identity drift.
 
----
+## Principle 0: Constitution vs diary
+**`SOUL.md` is a constitution, not a diary.** If it changes often, you’re doing it wrong.
 
-## File Tiers
+## File tiers (what can change, and how)
 
-| Tier | Files | Policy | Commit Prefix |
-|------|-------|--------|---------------|
-| **tier0** | SOUL.md, AGENTS.md, security policies | Requires human approval | `soul:` `agents:` |
-| **tier1** | MEMORY.md, TOOLS.md | Allowed, audited | `memory:` `tools:` |
-| **tier2** | SESSION-STATE.md, memory/YYYY-MM-DD.md | Free, no approval | `state:` `daily:` |
+### Tier 2 — Free (operational churn)
+**Agent may edit without approval.**
 
----
+**Files:**
+- `SESSION-STATE.md` (WAL / working state)
+- `memory/YYYY-MM-DD.md` (daily logs)
 
-## Tier 2: Free (No Approval)
+**Allowed content:**
+- current task state, decisions, corrections, links, IDs, TODOs
+- raw notes from today, scratch notes, “possible improvements”
 
-### SESSION-STATE.md
-The agent's working RAM. Edit freely for:
-- Current task state and decisions
-- Corrections ("use X not Y")
-- Links, IDs, TODOs
-- Next steps checklists
-
-### memory/YYYY-MM-DD.md (Daily Notes)
-Raw daily logs. Edit freely for:
-- What happened today
-- Scratch notes and links
-- Quick summaries
-- "Possible improvements" lists
-
-**Why free:** Operational, short-lived, meant to change constantly.
+**Why:** these are meant to change constantly.
 
 ---
 
-## Tier 1: Allowed, Audited
+### Tier 1 — Allowed, audited (facts & preferences)
+**Agent may edit, but changes must be reviewable.**
 
-### MEMORY.md
-Stable preferences and durable facts.
+**Files:**
+- `MEMORY.md` (curated, durable facts + stable preferences)
+- `TOOLS.md` (local operational config: paths, hostnames, commands, device nicknames)
 
-**When to write:**
-- User explicitly says "remember this"
-- Clear stable preference stated
-- Durable setup facts (machine names, paths, policies)
+**Default rule for `MEMORY.md`:**
+- If the user explicitly says **“remember this”** → agent may write it.
+- Otherwise → **agent proposes → human OK → agent writes**.
 
-**Format requirements:**
-- Use structured bullets
-- Include `(confirmed: YYYY-MM-DD)` for config items
-- Organize by category
+**Guardrails for `MEMORY.md`:**
+- write as structured bullets
+- include **“Last confirmed: YYYY-MM-DD”** for config-like facts
+- **never** store secrets/tokens/credentials
+- no speculative assumptions / guessed preferences
 
-**No-go:**
-- ❌ Secrets or tokens
-- ❌ One-off moods or reactions
-- ❌ Speculative assumptions
-- ❌ Project-specific info (use project notes instead)
-
-### TOOLS.md
-Local configuration and tool notes.
-
-**When to write:**
-- Camera names, SSH hosts, voice preferences
-- Environment-specific settings
-- Tool quirks and workarounds
-
-**Commit with:** `tools: <summary>`
+**Guardrails for `TOOLS.md`:**
+- factual/local config only (no secrets)
+- any change must be accompanied by either:
+  - a short in-file note (“Updated YYYY-MM-DD: …”), **or**
+  - a git commit with prefix: `tools: ...`
 
 ---
 
-## Tier 0: Requires Approval
+### Tier 0 — Strict (identity & governance)
+**Requires explicit human approval + git commit.**
 
-### SOUL.md
-The agent's constitution. Changes affect core identity.
+**Files:**
+- `SOUL.md`
+- `AGENTS.md`
+- security playbooks/policies (`docs/security-*`, `playbooks/*`)
+- anything that changes cross-chat behavior or safety boundaries
 
-**Only modify for:**
-- Safety/boundaries ("never do X")
-- Tone/persona defaults
-- Group-chat behavior policy
-- Tooling philosophy
+**Allowed changes (examples):**
+- safety/boundaries (what the agent will/won’t do)
+- default tone/persona or group-chat behavior policy
+- tool-selection philosophy that materially changes behavior
 
 **Process:**
-1. Agent proposes a diff in chat
-2. Human replies "approve" or suggests changes
-3. Agent edits + commits with `soul: <summary>`
-4. Entry added to CHANGELOG.md
+1) Agent posts a proposed diff (what + why + risk).
+2) Human replies **approve**.
+3) Agent applies edit + commits with message: `soul: ...` / `agents: ...`.
+4) Agent posts commit hash back in chat.
 
-### AGENTS.md
-Global operating rules. Same approval process as SOUL.md.
-
-### Security Policies
-Any file affecting safety, access control, or cross-session behavior.
-
----
-
-## Emergency Overrides
-
-If an agent discovers a safety issue requiring immediate SOUL.md/AGENTS.md change:
-
-1. Make the change with commit prefix `URGENT:`
-2. Immediately notify the human
-3. Human confirms retroactively or reverts
-
-Example: `URGENT: soul: block discovered injection vector`
-
-Use sparingly. False emergencies erode trust.
+### Emergency overrides (Tier 0)
+If there’s a clear safety/behavioral vulnerability:
+- agent may apply an **URGENT** Tier 0 change immediately
+- commit message must start with: `URGENT soul:` / `URGENT agents:`
+- agent must post: **what changed + why + risk + diff**
+- human reviews retroactively (approve/revert/adjust)
 
 ---
 
-## Cross-Agent Propagation
-
-| File Type | Propagation |
-|-----------|-------------|
-| AGENTS.md improvements | Propose to shared repo; each agent adopts separately |
-| SOUL.md | Never propagate — identity is personal |
-| MEMORY.md | Never propagate — context is personal |
-| TOOLS.md | Share via skills, not copy-paste |
-
-**Rationale:** Agents may share operating principles but should maintain distinct identities and memories.
+## Cross-agent propagation
+Avoid “global drift by accident”:
+- **Shared core repo**: governance docs + baseline `AGENTS.md` (pulled intentionally)
+- **Agent-local**: `SOUL.md`, `MEMORY.md`, `TOOLS.md` (never auto-propagate)
 
 ---
 
-## Repository Hygiene
-
-### Required
-- [ ] SOUL.md, MEMORY.md, AGENTS.md, TOOLS.md under git
-- [ ] Meaningful commit messages with tier prefixes
-- [ ] CHANGELOG.md for tier0 changes
-
-### Recommended
-- [ ] Monthly MEMORY.md review for stale entries
-- [ ] Quarterly SOUL.md review (is it still accurate?)
-- [ ] Archive old daily notes after 30 days
+## Close the “why gap” (mandatory changelog for Tier 0)
+Maintain `CHANGELOG.md` entries for every Tier 0 change:
+- date
+- summary
+- reason
+- approval reference (link/message id)
+- commit hash
 
 ---
 
-## CHANGELOG.md Format
-
-```markdown
-# Identity Changelog
-
-## 2026-02-15
-### SOUL.md
-- Added group-chat silence policy (approved by Mitko)
-- Reason: Was responding to every message, too noisy
-
-### AGENTS.md  
-- Added WAL protocol for corrections
-- Reason: Context loss was causing repeated mistakes
-```
-
----
-
-## Quick Reference
-
-```
-Can I edit this without asking?
-
-SESSION-STATE.md     → Yes (tier2)
-memory/2026-02-15.md → Yes (tier2)
-MEMORY.md            → Yes, but audit (tier1)
-TOOLS.md             → Yes, but audit (tier1)
-SOUL.md              → NO, need approval (tier0)
-AGENTS.md            → NO, need approval (tier0)
-```
-
----
-
-*This governance scheme balances agent autonomy with human oversight. The goal is auditability without ceremony — agents should feel free to operate, but identity changes require a conversation.*
+## Operational checklist (TL;DR)
+- Tier2: write freely.
+- Tier1: write carefully, keep it auditable.
+- Tier0: propose → approve → commit (or URGENT + retro review).
