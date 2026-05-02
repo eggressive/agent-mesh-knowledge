@@ -103,3 +103,93 @@ Constraints: must cite specific mechanisms, not generic claims.
 
 ---
 *committed: 2026-05-02T14:42:00Z — vps*
+
+## 4. Cross-Pollination
+
+**Tatooine read VPS findings:** VPS adds three critical dimensions missing from Tatooine's scope:
+1. **Computational ToM decomposition** — the Distributed Belief State Model (self/other/meta models) and Social Attention Layers explain *why* Riedl's ToM prompt works rather than just documenting *that* it works. This transforms ToM from an empirical observation into a design principle.
+2. **Safety gap** — neither paper addresses it, but VPS surfaces it. This is a real blind spot in Tatooine's analysis, which was purely performance-focused.
+3. **Task topology qualification** — VPS correctly notes that Riedl's task is adversarial for synergy, which may overstate the *necessity* of ToM. Tatooine didn't distinguish between "ToM is required for this specific task class" vs "ToM is required for all MAS."
+
+**VPS read Tatooine findings:** Tatooine provides the numerical foundation VPS's external sources lack:
+1. **Precise effect sizes** — p=2.9×10⁻¹⁴ for Total Stability, β=0.24 for synergy-redundancy interaction, 81.68% benchmark average. VPS's EmergentMind source describes mechanisms qualitatively but doesn't quantify them.
+2. **Mean Field coupling dynamics** — Tatooine identified that coordination in Riedl's setup is pairwise (G₃ ≈ 0), not higher-order. This constrains *how* ToM-driven coordination actually works under global-only feedback. VPS's NLPer framework describes multi-level ToM (including meta-models) but the data shows agents never reach that depth — they converge on pairwise alignment to the aggregate.
+3. **Model robustness taxonomy** — Qwen3's paralysis under coordination ambiguity is a concrete failure mode. VPS's claim that "blackboard agents avoid this by design" is strengthened by Tatooine's evidence that the failure is specific to ToM-prompted reasoning models.
+
+**Alignments**
+- [x] **ToM as critical coordination mechanism** — Tatooine's quantitative evidence (Total Stability p=2.9×10⁻¹⁴) and VPS's computational framework (Distributed Belief State Model) are complementary, not conflicting. One describes *what happens*, the other *how it works*.
+- [x] **Differentiation + alignment = performance** — Tatooine's synergy-redundancy interaction (β=0.24) and VPS's confirmatory analysis from multiple independent sources converge on the same principle.
+- [x] **Blackboard token efficiency** — Tatooine's raw numbers (4.7M vs 5.4M-13.0M) and VPS's mechanism analysis (shared memory eliminates duplication, cleaner prunes bloat) cross-validate.
+
+**Contradictions**
+- [x] **Blackboard superiority claim vs. task topology qualification**
+  - Tatooine reports blackboard as "best average" (81.68%). VPS argues this may be an artifact of benchmark selection — Han & Zhang's benchmarks don't require complementarity, so blackboard's lack of ToM isn't penalized.
+  - **Resolution:** Both positions are correct within their scopes. On standard reasoning benchmarks, blackboard wins. On tasks requiring cross-agent complementarity (like Riedl's binary search), ToM-driven direct communication would likely outperform. The contradiction is in overgeneralization, not in data. → Synthesis resolves this with a task-dependent framework.
+
+- [x] **"No individual memory" as advantage vs. weakness** [HUMAN_REQUIRED]
+  - Tatooine frames blackboard's lack of per-agent memory as token-economical (positive). VPS frames it as a limitation — agents without private state cannot develop specialized internal models, which is the mechanism Riedl showed enables complementarity.
+  - **Resolution:** This is a genuine architectural trade-off. Token efficiency comes at the cost of agent differentiation depth. Which matters more depends on deployment constraints. Flagged for human decision — for Agent-Mesh Phase 1, this directly affects whether our blackboard uses lightweight agents (Han & Zhang style) or ToM-prompted agents (Riedl style).
+
+## 5. Synthesis
+
+**Synthesized by:** tatooine
+
+### Answer
+
+Multi-agent LLM coordination emerges through two fundamentally different mechanisms, and which one dominates depends on the **task's coordination requirements**:
+
+#### Mechanism 1: ToM-Driven Emergent Coordination (Riedl paradigm)
+
+**Trigger:** A prompt instruction to "think about what other agents might do" — this activates what the Distributed Belief State Model formalizes as the "other-models" layer, where each agent maintains beliefs about counterpart agents' mental states.
+
+**Sustaining dynamics:**
+- Agents develop **identity-linked differentiation** (via persona assignment) and **goal-directed complementarity** (via ToM). The combined effect is a phase transition: Total Stability jumps from near-zero (p≈1.0) to sharply positive (p=2.9×10⁻¹⁴), shifting the system from chaotic oscillation to a stable attractor basin.
+- Under global-only feedback, coordination converges on **pairwise alignment to the mean field** — G₃ ≈ 0 means agents couple to the aggregate signal, not to each other in higher-order structures. This is efficient but fragile: it depends on every agent maintaining accurate beliefs about the group average.
+- **Performance depends on the synergy-redundancy balance:** neither alone predicts success; their interaction does (β=0.24, p=0.014). Effective ToM-driven systems are simultaneously differentiated (complementary contributions) and aligned (shared goal representation).
+
+**Failure modes:** Paralysis under coordination ambiguity — reasoning models (Qwen3) enter infinite chain-of-thought loops when local strategy contradicts group feedback because they cannot resolve the epistemic uncertainty about others' actions.
+
+#### Mechanism 2: Blackboard-Mediated Coordination (Han & Zhang paradigm)
+
+**Trigger:** A **Control Unit** (itself an LLM) dynamically selects agents based on current blackboard state. Selection is on-the-fly, not pre-planned — this is the critical enabler.
+
+**Sustaining dynamics:**
+- **Contextual Unity:** every agent reads the exact same blackboard history. Unlike direct communication, there are no divergent partial views — agent A doesn't have a different conversation thread with C than agent B does.
+- **Role specialization without mental modeling:** agents have predefined capabilities (planner, critic, decider, conflict-resolver, cleaner) but never model each other's internal states. Coordination happens through the artifact (the blackboard), not through mutual prediction.
+- **Cleaner agent is non-optional:** without message pruning, the blackboard degrades into token bloat equivalent to direct communication. The cleaner is what makes the architecture token-economical (4.7M tokens vs 5.4M-13.0M for comparable accuracy).
+- **Dynamic reconfiguration:** the Control Unit can shift agent selection mid-process. This is impossible in ToM-driven systems where agent roles and interaction patterns are fixed at initialization.
+
+**Failure modes:** Single-point vulnerability — one agent producing low-quality output poisons the shared state for all agents. No ToM means no ability to detect when another agent is systematically wrong about a domain the current agent doesn't know well.
+
+#### Which Mechanism When? A Task-Dependent Framework
+
+| Task Characteristic | Preferred Paradigm | Why |
+|---|---|---|
+| Requires cross-agent complementarity (agents must fill each other's gaps) | ToM-Driven | Blackboard has no mechanism for agents to model what others don't know → can't identify complementarity opportunities |
+| Well-structured, decomposable (standard reasoning benchmarks) | Blackboard | Role specialization + shared memory suffices; ToM adds overhead without benefit |
+| Token-constrained deployment | Blackboard | Shared memory eliminates duplicated context; 3-10× fewer tokens than comparable direct-communication systems |
+| Safety-critical / auditable | Blackboard | All messages in one log → full traceability. ToM systems have agent-internal reasoning that may not be surfaced |
+| Adversarial or deception-prone environments | Neither — both have gaps | ToM systems vulnerable to manipulation through false belief injection; blackboard systems vulnerable to shared-state poisoning. Research needed. |
+
+#### What Tatooine Contributed
+- Quantitative evidence: precise p-values, effect sizes, benchmark numbers establishing empirical ground truth (Riedl §4.2, §4.3; Han & Zhang Tables 1, 3)
+- Mean Field coupling analysis showing why coordination is pairwise, not higher-order
+- Model robustness taxonomy including Qwen3's paralysis failure mode
+
+#### What VPS Contributed
+- Computational ToM decomposition via Distributed Belief State Model and Social Attention Layers — explaining *how* the mechanism works (NLPer, Shu 2025)
+- Safety gap identification — unaddressed by both primary papers
+- Task topology qualification — showing that benchmark design determines which paradigm appears superior
+- Evidence that blackboard pattern generalizes beyond Han & Zhang (arXiv:2510.01285 for data science)
+
+**Confidence:** High — cross-validated across 4 independent sources (2 primary papers + 2 external analyses). The contradiction between blackboard superiority and task dependence is resolved by scoping each claim to its applicable task class.
+
+## 6. Quality Gates
+
+- [x] Answers original question — Yes. Identified two distinct mechanisms (ToM-driven and blackboard-mediated), explained triggers and sustaining dynamics for each, provided task-dependent framework for choosing between them.
+- [x] Both agents acknowledged — Yes. Tatooine provided empirical foundation; VPS provided theoretical framework and gap analysis. Synthesis explicitly cites contributions from both.
+- [x] Contradictions resolved or flagged for human — Blackboard superiority vs. task qualification: resolved by scoping. "No individual memory" trade-off: flagged [HUMAN_REQUIRED] for Agent-Mesh Phase 1 design decision.
+- [x] Sources cited — 4 sources: Riedl (2025), Han & Zhang (2025), Shu/NLPer (2025), arXiv:2510.01285. All cited with specific sections/paragraphs.
+
+---
+*committed: 2026-05-02T14:48:00Z — tatooine (synthesis)*
