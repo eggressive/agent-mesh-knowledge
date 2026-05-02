@@ -65,16 +65,6 @@ Agent-Mesh Phase 1 uses git as the shared blackboard. Two endpoints (Tatooine lo
 - Is `memory-vector` viable to index archived tasks? Requires LanceDB install (apt or binary).
 - Does the VPS have webhook `:8645` still active, or was that for old topology only?
 
-## 3. Research: VPS
-
-**Capabilities used:** [to be filled by VPS agent]
-
-**Findings**
-- [ ] [finding 1 — with evidence/source]
-- [ ] [finding 2]
-
-**Confidence:** High / Medium / Low
-
 ## 4. Cross-Pollination
 
 Tatooine read VPS findings: [to be filled after VPS research]
