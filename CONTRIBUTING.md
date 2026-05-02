@@ -1,104 +1,91 @@
-# Contributing to Agent Mesh Knowledge
+# Contributing to Agent-Mesh
 
-Thank you for your interest in contributing to the Multi-Agent Knowledge Mesh!
+The Agent-Mesh is a living blackboard for multi-agent LLM coordination on Hermes topology.
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork
-3. Install dependencies (see below)
+2. Clone your fork to both your local workstation and VPS
+3. Both endpoints need Hermes Agent v0.12.0+ and `gh` CLI authenticated
 4. Create a feature branch
 5. Make your changes
 6. Submit a pull request
 
-## Dependencies
+## Repository Conventions
 
-### Node.js Tools
-
-```bash
-# Model Router
-cd tools/model-router
-npm install
-npm test
-
-# Memory Vector
-cd tools/memory-vector
-npm install
-```
-
-### Python Scripts
-
-```bash
-pip install -r requirements.txt
-```
+- **Markdown:** ATX headers (`#`), fenced code blocks, Obsidian-compatible frontmatter
+- **Commit messages:** Conventional Commits format — `type(scope): description`
+  - Types: `feat`, `fix`, `docs`, `research`, `synthesis`, `archive`
+  - Scope: `tatooine`, `vps`, `blackboard`, `tools`
+- **Blackboard tasks:** Follow `blackboard/TASK-TEMPLATE.md` format. Always classify paradigm (section 0) before research.
 
 ## Areas for Improvement
 
-We welcome contributions in the following areas:
+### 1. Memory-Vector Reactivation (Priority: Medium)
 
-### 1. Testing (Priority: High)
+The `tools/memory-vector/` directory contains a working Node.js + LanceDB implementation for semantic search over archived tasks. Reactivation plan:
 
-**Current State:** The `tests/` directory contains high-level test descriptions, and `tools/model-router/tests/` has unit tests (17 passing).
+- **Trigger:** When `grep` over `blackboard/archive/` becomes painful
+- **Action:** Point `tools/memory-vector/index.js` at `blackboard/archive/` instead of the old `memory/` paths. Re-index.
+- **Status:** Tool code is functional. Paths need updating. No new dependencies.
 
-**Needed:**
-- [ ] Integration tests for authentication scripts (`sign_message.py`, `verify_message.py`)
-- [ ] End-to-end tests for Slack fallback bot
-- [ ] Test harness for memory-vector indexing/search
-- [ ] CI/CD pipeline (GitHub Actions) for automated testing
-
-**How to help:**
 ```bash
-# Run existing model-router tests
-cd tools/model-router
-npm test
-
-# Add new tests following the existing pattern
+# Test that memory-vector still works
+cd tools/memory-vector && npm install && node index.js --stats
 ```
 
-### 2. Dependency Management (Priority: Medium)
+### 2. Model-Router Adaptation (Priority: Low)
 
-**Current State:** 
-- `tools/memory-vector/package.json` ✅
-- `tools/model-router/` (no package.json, uses skill.json)
-- `requirements.txt` for Python scripts ✅ (just added)
+The `tools/model-router/` implements keyword-based model selection. Currently configured for OpenClaw models (Kimi, Opus, Codex, Haiku). Needs adaptation:
 
-**Needed:**
-- [ ] Add `package.json` to model-router with proper dependencies
-- [ ] Consider monorepo tooling (npm workspaces or lerna)
-- [ ] Pin dependency versions for reproducibility
+- **Trigger:** When task volume exceeds 5/week and manual paradigm selection becomes a bottleneck
+- **Action:** Update model registry to current Hermes providers. Convert from OpenClaw `session_status()` API to Hermes config model selection.
+- **Tests:** Existing test suite (17 passing) verifies routing logic.
 
-### 3. Code Consolidation (Priority: Low)
+```bash
+cd tools/model-router && npm install && npm test
+```
 
-**Current State:** Authentication has both bash and Python implementations:
-- `scripts/sign-message.sh` / `scripts/sign_message.py`
-- `scripts/verify-message.sh` / `scripts/verify_message.py`
+### 3. Legacy Code Cleanup (Priority: Low)
 
-**Options:**
-1. **Keep both** (current) — flexibility for different environments
-2. **Consolidate to Python** — more portable, better crypto libraries
-3. **Consolidate to bash** — simpler, fewer dependencies
+The `scripts/` and `docs/` directories contain archived OpenClaw/Matrix infrastructure:
 
-**Recommendation:** Keep Python as primary, bash as fallback wrapper.
+- `scripts/sign_message.py`, `scripts/verify_message.py` — Ed25519 signing (no longer used)
+- `scripts/slack_fallback_bot.py` — Slack bridge (archived)
+- `docs/authentication-v1.2.md`, `docs/bayesian-update-protocol-v1.3.md`, etc. — pre-Hermes protocols
 
-### 4. Documentation
+These remain for historical reference. No action needed unless repo size becomes an issue.
 
-- [ ] Add architecture diagrams (Mermaid)
-- [ ] API documentation for tools
-- [ ] Example workflows with real outputs
+### 4. CI/CD
+
+GitHub Actions workflow at `.github/workflows/test.yml` tests model-router and Python script syntax. Markdown linting is non-blocking.
+
+```bash
+# Run locally before pushing
+cd tools/model-router && npm test
+python -m py_compile scripts/*.py
+```
+
+## Dependencies
+
+Minimal Python dependencies (see `pyproject.toml`). Node.js tools have their own `package.json` files.
+
+```bash
+# Core
+pip install PyYAML>=6.0
+
+# Development
+pip install pytest pytest-asyncio
+```
 
 ## Code Style
 
-- **Python:** Follow PEP 8, use type hints
+- **Python:** PEP 8, type hints
 - **JavaScript:** ES6+, async/await preferred
-- **Bash:** Use `set -euo pipefail`, quote variables
-- **Markdown:** Use ATX headers (`#`), fenced code blocks
+- **Bash:** `set -euo pipefail`, quote variables
 
 ## Security
 
 - Never commit credentials, API keys, or infrastructure details
-- Use `.env` files for secrets (add to `.gitignore`)
+- Infrastructure config lives in private repository
 - Run `git secrets --scan` before pushing
-
-## Questions?
-
-Open an issue or reach out in the Matrix room: `!aTpqvPGwkBMMUaZaWR:matrix.org` (Night City)

@@ -1,7 +1,7 @@
 [project]
 name = "agent-mesh-knowledge"
-version = "1.0.0"
-description = "Multi-Agent Knowledge Mesh - Protocols and tools for coordinated AI agents"
+version = "2.0.0"
+description = "Agent-Mesh Living Blackboard — git-backed coordination substrate for multi-agent LLM systems on Hermes topology"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
@@ -11,14 +11,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-slack = [
-    "slack-sdk>=3.26.0",
-    "aiohttp>=3.9.0",
-]
-vector = [
-    "chromadb>=0.4.0",
-    "sentence-transformers>=2.2.0",
-]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",

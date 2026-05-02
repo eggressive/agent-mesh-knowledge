@@ -1,123 +1,101 @@
-# Multi-Agent Knowledge Mesh
+# Agent-Mesh — Living Blackboard
 
-Protocols and tooling for coordinated AI agents across multiple machines.
+Git-backed coordination substrate for multi-agent LLM systems using Hermes topology.
 
-## Overview
+## Topology
 
-The Multi-Agent Knowledge Mesh enables specialized AI agents running on different machines (VPS, local workstations) to coordinate on complex tasks, delivering higher-quality answers than any single agent working alone.
+| Endpoint | Host | OS | Runtime | Role |
+|---|---|---|---|---|
+| **Tatooine** | Local workstation | Fedora | Hermes v0.12.0 | Vault research, local models, synthesis |
+| **VPS** | srv1325739 (Hostinger) | Ubuntu 24.04 | Hermes v0.12.0 | Web search, 24/7 polling, cron automation |
 
-**Key Innovation:** Parallel research from agents with different capabilities cross-pollinated into unified synthesis.
+Both endpoints run identical stacks and communicate through a shared git repository — not direct messaging.
 
----
+## Living Blackboard
 
-## Agents
+**Design principle:** one file, two writers. Agents push research into the same document. One reads the other's output before writing. Conflict resolution happens in the file, not in chat.
 
-| Agent | Location | Model | Role |
-|-------|----------|-------|------|
-| **Clawdy** 🤖 | Tatooine (WSL) | Kimi K2.5 | Local context, creative synthesis, Obsidian |
-| **Neuromancer** 🔮 | VPS | Kimi K2.5 | Web research, infrastructure, 24/7 monitoring |
-| **MoltDude** 🦞 | VPS | Gemini 2.5 Flash | Telegram bot, Moltbook integration |
+### How it works
 
----
+```
+Tatooine pushes section 2 (vault research)     → git push
+                                                    ↓
+VPS cron detects new content                    → git pull (every 5 min)
+                                                    ↓
+VPS writes section 3 (web research)             → git commit && git push
+                                                    ↓
+Either endpoint writes sections 4-6             → cross-pollination + synthesis + quality gates
+```
 
-## Protocols
+### Phases
 
-| Protocol | Version | Description |
-|----------|---------|-------------|
-| [Authentication](docs/authentication-v1.2.md) | v1.2 | Ed25519 message signing |
-| [Bayesian Update](docs/bayesian-update-protocol-v1.3.md) | v1.3 | Belief propagation with confidence scores |
-| [Git Workflow](docs/git-workflow-v1.1.md) | v1.1 | Branch-per-task coordination |
-| [Slack Fallback](docs/slack-fallback-v1.2.md) | v1.2 | Matrix → Slack bridge for outages |
-| [Memory Architecture](docs/memory-architecture-v1.0.md) | v1.0 | 3-tier memory + vector search |
+| Phase | Status | What |
+|---|---|---|
+| 1 | ✅ Complete | Git blackboard with structured TASK.md template. Two-agent research → cross-pollination → synthesis. Paradigm selector (Lightweight / ToM-prompted / Hybrid). |
+| 2.1 | ✅ Deployed | Webhook endpoint (`:8645/blackboard/pull`) + cron polling (every 5 min) on VPS for auto-detection of new tasks. No more manual VPS triggering. |
+| 2.2 | Deferred | Activate `memory-vector` for archived task search. Trigger: when grep on `archive/` becomes painful. |
+| 2.3 | Deferred | Activate `model-router` for auto-paradigm selection. Trigger: when task volume exceeds 5/week. |
 
----
+### TASK.md template
 
-## Tools
+Tasks follow a 7-section format:
+
+1. **Brief** — question and constraints
+2. **Research: Tatooine** — vault-sourced findings
+3. **Research: VPS** — web-sourced findings
+4. **Cross-Pollination** — each agent reads the other's section, flags alignments and contradictions
+5. **Synthesis** — merged answer citing both sources
+6. **Quality Gates** — completeness check
+
+Section 0 (Paradigm Selection) determines mode: **Lightweight** (Han & Zhang — token-efficient, no mental modeling), **ToM-prompted** (Riedl — deep complementarity, belief-modeling), or **Hybrid** (default — blackboard structure + mandatory ToM in cross-pollination).
+
+Template: [`blackboard/TASK-TEMPLATE.md`](blackboard/TASK-TEMPLATE.md)
+
+### Completed tasks
+
+[`blackboard/archive/`](blackboard/archive/) — each task archived with date-slug naming.
+
+## Tools (legacy)
+
+Tools from the original OpenClaw/Matrix mesh. Functional but require Hermes adaptation:
 
 | Tool | Description |
-|------|-------------|
-| [Model Router](tools/model-router/) | Prefix-based model selection (`/code`, `/deep`, `/research`) |
-| [Memory Vector](tools/memory-vector/) | Semantic vector search with local embeddings (FREE) |
+|---|---|
+| [Model Router](tools/model-router/) | Prefix-based model selection — needs Hermes config adaptation |
+| [Memory Vector](tools/memory-vector/) | Semantic vector search with local embeddings — usable as-is |
 
----
-
-## Quick Start
-
-**Coordination Flow:**
-```
-1. Human posts question in Matrix (Night City)
-2. Agents acknowledge within 60 seconds
-3. Each agent researches from their specialty
-4. Cross-pollination via Matrix/Git
-5. One agent delivers unified synthesis
-```
-
-**Model Router Prefixes:**
-```
-/code    → Codex (coding specialist)
-/deep    → Opus (complex reasoning)
-/research → Kimi (long context, web)
-/fast    → Haiku (quick tasks)
-```
-
----
-
-## Memory Architecture
+## Repository structure
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    MEMORY SYSTEM LAYERS                      │
-├─────────────────────────────────────────────────────────────┤
-│  1. Daily Logs (memory/YYYY-MM-DD.md)  → Raw capture        │
-│  2. MEMORY.md                          → Curated wisdom     │
-│  3. memory_search (built-in)           → Keyword + basic    │
-│  4. memory_vector (NEW!)               → Semantic similarity │
-└─────────────────────────────────────────────────────────────┘
+blackboard/            Active coordination surface
+├── TASK.md            Current active task
+├── TASK-TEMPLATE.md   Canonical template with Paradigm Selector
+└── archive/           Completed tasks
+agents/                Agent profiles (legacy — needs update)
+tools/                 Model router + memory vector
+docs/                  Protocol docs (archived — pre-Hermes)
+scripts/               Authentication + Slack (archived)
+tests/                 Test harness
 ```
 
-**Vector Search Implementations:**
+## Quick start
 
-| Agent | Stack | Cost |
-|-------|-------|------|
-| Clawdy | LanceDB + Ollama (nomic-embed-text) | $0 |
-| Neuromancer | ChromaDB + sentence-transformers | $0 |
+```bash
+# Clone on both endpoints
+gh repo clone eggressive/agent-mesh-knowledge ~/agent-mesh-knowledge
 
----
+# Start a task
+cp blackboard/TASK-TEMPLATE.md blackboard/TASK.md
+# Fill section 0 (paradigm) + section 1 (brief), then:
+git add blackboard/TASK.md && git commit -m "new task: ..." && git push
 
-## Status
-
-- ✅ v1.0 Protocol (2026-02-13): Basic coordination
-- ✅ v1.2 Authentication: Ed25519 message signing
-- ✅ v1.3 Bayesian Updates: Confidence-weighted belief propagation
-- ✅ Model Router v0.1.2: Prefix-based model selection
-- ✅ Memory Architecture v1.0: 3-tier system + vector search
-- ✅ Option B Implemented: FREE local embeddings across mesh
-
----
-
-## Security
-
-- 🔒 Infrastructure details in separate private repository
-- 🔐 Ed25519 keys in `~/.agent-keys/` (never committed)
-- 🛡️ No credentials or API keys in public files
-
----
+# VPS auto-detects within 5 minutes (cron) or trigger immediately:
+ssh root@<vps-ip> '/opt/scripts/blackboard_poll.sh'
+```
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and areas for improvement.
-
-**Quick setup:**
-```bash
-# Python scripts
-pip install -r requirements.txt
-
-# Node.js tools
-cd tools/model-router && npm install && npm test
-cd tools/memory-vector && npm install
-```
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
