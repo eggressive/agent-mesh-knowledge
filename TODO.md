@@ -182,6 +182,7 @@
 | Date | Item | Commit |
 |------|------|--------|
 | 2026-05-02 | Phase 2.1 — Webhook + cron auto-detection | (deployed on VPS) |
+| 2026-05-24 | Agent heartbeat / stale-agent detection | (see `docs/agent-heartbeat-stale-detection.md`) |
 
 ---
 
